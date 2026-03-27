@@ -1,0 +1,8 @@
+crewai
+langgraph
+fastapi
+uvicorn
+python-dotenv
+pydantic
+requests
+langdetect
