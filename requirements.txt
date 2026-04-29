@@ -3,7 +3,7 @@ langgraph
 fastapi
 uvicorn
 python-dotenv
-pydantic
+pydantic[email]
 requests
 langdetect
 httpx
@@ -27,3 +27,4 @@ pillow
 python-jose
 passlib
 bcrypt
+email-validator
