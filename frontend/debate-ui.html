@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwarmBharat AI - Real-time Debate</title>
+    <style>
+        :root {
+            --color-primary: #2563eb;
+            --color-secondary: #7c3aed;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-background: #ffffff;
+            --color-background-secondary: #f8fafc;
+            --color-background-tertiary: #f1f5f9;
+            --color-text: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-text-info: #3b82f6;
+            --color-border: #e2e8f0;
+            --color-border-info: #3b82f6;
+            --color-border-success: #10b981;
+            --color-border-warning: #f59e0b;
+            --border-radius: 8px;
+            --border-radius-lg: 12px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .debate-container {
+            background: var(--color-background);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .domain-select {
+            padding: 15px;
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background: var(--color-background);
+            cursor: pointer;
+        }
+
+        .debate-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .debate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .debate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .debate-panel {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .debate-header {
+            text-align: center;
+            padding: 20px;
+            background: var(--color-background-tertiary);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .debate-header h3 {
+            font-size: 1.3rem;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+        }
+
+        .debate-header p {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .agent-thoughts {
+            margin-bottom: 30px;
+        }
+
+        .agent-thought {
+            padding: 20px;
+            margin: 15px 0;
+            background: var(--color-background-secondary);
+            border-left: 4px solid var(--color-border-info);
+            border-radius: var(--border-radius);
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.6s ease forwards;
+            position: relative;
+        }
+
+        .agent-thought.loading {
+            opacity: 0.7;
+            border-left-color: var(--color-border);
+        }
+
+        .agent-thought.complete {
+            border-left-color: var(--color-border-success);
+        }
+
+        .agent-thought.error {
+            border-left-color: var(--color-border-error);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .agent-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .agent-icon.finance { background: var(--color-success); }
+        .agent-icon.legal { background: var(--color-primary); }
+        .agent-icon.risk { background: var(--color-warning); }
+        .agent-icon.career { background: var(--color-secondary); }
+
+        .confidence-badge {
+            background: var(--color-background-tertiary);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .confidence-badge.high {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .confidence-badge.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .confidence-badge.low {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .agent-reasoning {
+            color: var(--color-text);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .agent-sources {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            border-top: 1px solid var(--color-border);
+            padding-top: 12px;
+        }
+
+        .agent-sources strong {
+            color: var(--color-text);
+        }
+
+        .synthesis-section {
+            display: none;
+            background: linear-gradient(135deg, var(--color-background-tertiary), var(--color-background-secondary));
+            border-radius: var(--border-radius-lg);
+            padding: 30px;
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .synthesis-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .synthesis-header h3 {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+
+        .overall-confidence {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .confidence-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(var(--color-success) 0deg, var(--color-success) var(--confidence), var(--color-border) var(--confidence));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .confidence-circle::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--color-background);
+            border-radius: 50%;
+        }
+
+        .confidence-value {
+            position: relative;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--color-text);
+        }
+
+        .synthesis-content {
+            background: var(--color-background);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .key-insights {
+            background: var(--color-background);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .key-insights h4 {
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+
+        .insight-list {
+            list-style: none;
+        }
+
+        .insight-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .insight-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insight-list li::before {
+            content: "💡";
+            margin-right: 8px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .processing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .processing-indicator.active {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .debate-container {
+                padding: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .agent-thought {
+                padding: 15px;
+            }
+
+            .synthesis-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤔 SwarmBharat AI Debate</h1>
+            <p>Watch multiple AI agents debate your question in real-time</p>
+        </div>
+
+        <div class="debate-container">
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="queryInput" class="input-field" placeholder="Ask anything... (e.g., Should I invest ₹50,000 in stocks or real estate?)">
+                    <select id="domainSelect" class="domain-select">
+                        <option value="investment">Investment</option>
+                        <option value="career">Career</option>
+                        <option value="business">Business</option>
+                        <option value="education">Education</option>
+                        <option value="health">Health</option>
+                        <option value="immigration">Immigration</option>
+                        <option value="farming">Farming</option>
+                        <option value="government">Government</option>
+                    </select>
+                </div>
+                <button id="debateButton" class="debate-button" onclick="startDebate()">
+                    Start AI Debate
+                </button>
+            </div>
+
+            <div id="debatePanel" class="debate-panel">
+                <div class="debate-header">
+                    <h3>🧠 Multiple perspectives being considered...</h3>
+                    <p>AI agents are analyzing your question from different angles</p>
+                </div>
+
+                <div id="agentThoughts" class="agent-thoughts">
+                    <!-- Agent responses will appear here -->
+                </div>
+
+                <div id="synthesisSection" class="synthesis-section">
+                    <div class="synthesis-header">
+                        <h3>🎯 Final Synthesis</h3>
+                        <div class="overall-confidence">
+                            <div class="confidence-circle" style="--confidence: 0deg;">
+                                <span class="confidence-value">0%</span>
+                            </div>
+                            <span>Overall Confidence</span>
+                        </div>
+                    </div>
+
+                    <div class="synthesis-content">
+                        <div id="synthesisText"></div>
+                    </div>
+
+                    <div class="key-insights">
+                        <h4>🔍 Key Insights</h4>
+                        <ul id="insightsList" class="insight-list">
+                            <!-- Insights will appear here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let eventSource = null;
+        let agentCount = 0;
+        let completedAgents = 0;
+
+        function startDebate() {
+            const query = document.getElementById('queryInput').value.trim();
+            const domain = document.getElementById('domainSelect').value;
+            
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            // Reset UI
+            resetDebateUI();
+            
+            // Disable button
+            const button = document.getElementById('debateButton');
+            button.disabled = true;
+            button.textContent = 'Debate in progress...';
+
+            // Show debate panel
+            document.getElementById('debatePanel').style.display = 'block';
+            document.getElementById('synthesisSection').style.display = 'none';
+
+            // Start the debate
+            const requestData = {
+                user_id: "demo_user",
+                query: query,
+                domain: domain,
+                user_profile: {
+                    age: 25,
+                    state: "Maharashtra",
+                    job: "Employed",
+                    monthly_income: 50000,
+                    risk_tolerance: "Moderate"
+                }
+            };
+
+            fetch('/api/v1/query/debate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                function readStream() {
+                    return reader.read().then(({ done, value }) => {
+                        if (done) {
+                            console.log('Stream complete');
+                            return;
+                        }
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6);
+                                
+                                if (data === '[DONE]') {
+                                    console.log('Debate finished');
+                                    reenableButton();
+                                    return;
+                                }
+                                
+                                try {
+                                    const event = JSON.parse(data);
+                                    handleDebateEvent(event);
+                                } catch (e) {
+                                    console.error('Error parsing event:', e);
+                                }
+                            }
+                        }
+                        
+                        return readStream();
+                    });
+                }
+                
+                return readStream();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Failed to start debate. Please try again.');
+                reenableButton();
+            });
+        }
+
+        function handleDebateEvent(event) {
+            if (event.type === 'agent_response') {
+                addAgentThought(event);
+            } else if (event.type === 'final_synthesis') {
+                showSynthesis(event.synthesis);
+            } else if (event.type === 'error') {
+                showError(event.message);
+            }
+        }
+
+        function addAgentThought(event) {
+            const container = document.getElementById('agentThoughts');
+            
+            // Create agent thought element
+            const thoughtDiv = document.createElement('div');
+            thoughtDiv.className = 'agent-thought loading';
+            thoughtDiv.id = `agent-${event.agent}`;
+            
+            // Determine agent icon and color
+            const agentInfo = getAgentInfo(event.agent);
+            
+            thoughtDiv.innerHTML = `
+                <div class="agent-header">
+                    <div class="agent-name">
+                        <div class="agent-icon ${event.agent}">${agentInfo.icon}</div>
+                        ${event.agent.charAt(0).toUpperCase() + event.agent.slice(1)} Agent
+                    </div>
+                    <div class="processing-indicator active">
+                        <span class="spinner"></span>
+                        <span>Thinking...</span>
+                    </div>
+                </div>
+                <div class="agent-reasoning"></div>
+                <div class="agent-sources"></div>
+            `;
+            
+            container.appendChild(thoughtDiv);
+            
+            // Simulate thinking time, then show response
+            setTimeout(() => {
+                thoughtDiv.classList.remove('loading');
+                thoughtDiv.classList.add('complete');
+                
+                // Update confidence
+                const confidenceClass = event.confidence >= 80 ? 'high' : 
+                                     event.confidence >= 70 ? 'medium' : 'low';
+                
+                thoughtDiv.innerHTML = `
+                    <div class="agent-header">
+                        <div class="agent-name">
+                            <div class="agent-icon ${event.agent}">${agentInfo.icon}</div>
+                            ${event.agent.charAt(0).toUpperCase() + event.agent.slice(1)} Agent
+                        </div>
+                        <div class="confidence-badge ${confidenceClass}">
+                            ${event.confidence.toFixed(1)}% confident
+                        </div>
+                    </div>
+                    <div class="agent-reasoning">${event.reasoning}</div>
+                    <div class="agent-sources">
+                        <strong>Sources:</strong> ${event.sources.join(', ')}
+                    </div>
+                `;
+                
+                completedAgents++;
+            }, 1000 + Math.random() * 2000); // Random thinking time
+        }
+
+        function showSynthesis(synthesis) {
+            const section = document.getElementById('synthesisSection');
+            const textDiv = document.getElementById('synthesisText');
+            const insightsList = document.getElementById('insightsList');
+            const confidenceCircle = document.querySelector('.confidence-circle');
+            const confidenceValue = document.querySelector('.confidence-value');
+            
+            // Update synthesis text
+            textDiv.innerHTML = synthesis.final_answer.replace(/\n/g, '<br>');
+            
+            // Update insights
+            insightsList.innerHTML = '';
+            synthesis.key_insights.forEach(insight => {
+                const li = document.createElement('li');
+                li.textContent = insight;
+                insightsList.appendChild(li);
+            });
+            
+            // Update confidence circle
+            const confidenceDeg = (synthesis.overall_confidence / 100) * 360;
+            confidenceCircle.style.setProperty('--confidence', `${confidenceDeg}deg`);
+            confidenceValue.textContent = `${synthesis.overall_confidence.toFixed(1)}%`;
+            
+            // Show synthesis section
+            section.style.display = 'block';
+            
+            // Scroll to synthesis
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getAgentInfo(agentName) {
+            const agents = {
+                'finance': { icon: '₹', color: '#10b981' },
+                'legal': { icon: '⚖️', color: '#3b82f6' },
+                'risk': { icon: '⚠️', color: '#f59e0b' },
+                'career': { icon: '💼', color: '#7c3aed' }
+            };
+            return agents[agentName] || { icon: '🤖', color: '#64748b' };
+        }
+
+        function resetDebateUI() {
+            document.getElementById('agentThoughts').innerHTML = '';
+            document.getElementById('synthesisSection').style.display = 'none';
+            completedAgents = 0;
+        }
+
+        function reenableButton() {
+            const button = document.getElementById('debateButton');
+            button.disabled = false;
+            button.textContent = 'Start AI Debate';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('agentThoughts');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'agent-thought error';
+            errorDiv.innerHTML = `
+                <div class="agent-header">
+                    <div class="agent-name">
+                        <div class="agent-icon" style="background: var(--color-error);">❌</div>
+                        Error
+                    </div>
+                </div>
+                <div class="agent-reasoning">${message}</div>
+            `;
+            container.appendChild(errorDiv);
+        }
+
+        // Handle Enter key in input
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startDebate();
+            }
+        });
+
+        // Add some example queries on load
+        window.addEventListener('load', function() {
+            const examples = [
+                "Should I invest ₹50,000 in stocks or real estate?",
+                "Is it better to switch jobs for a 30% salary hike?",
+                "Should I start my own business or continue working?",
+                "How should I prepare for UPSC while working?"
+            ];
+            
+            const input = document.getElementById('queryInput');
+            let exampleIndex = 0;
+            
+            // Cycle through examples
+            setInterval(() => {
+                if (!input.value && !input.matches(':focus')) {
+                    input.placeholder = examples[exampleIndex];
+                    exampleIndex = (exampleIndex + 1) % examples.length;
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

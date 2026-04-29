@@ -1,0 +1,82 @@
+{
+  "user_id": "user@google.com",
+  "created_at": "2026-04-25T18:42:24.986720",
+  "updated_at": "2026-04-25T18:42:24.988122",
+  "mode": "guided",
+  "language": "English",
+  "profile_complete": true,
+  "personal": {
+    "name": "User",
+    "age": null,
+    "gender": null,
+    "phone": null,
+    "email": null,
+    "city": "Not specified",
+    "district": "Not specified",
+    "state": "Not specified",
+    "aadhaar_masked": null,
+    "education": null
+  },
+  "domains": [
+    "career",
+    "finance",
+    "immigration"
+  ],
+  "current_domain": null,
+  "primary_challenge": "hello",
+  "user_type": "working_professional",
+  "farming": {
+    "is_farmer": false,
+    "farm_size_acres": null,
+    "crops": [],
+    "district": null,
+    "schemes_interested": []
+  },
+  "career": {
+    "current_role": null,
+    "company": null,
+    "experience_years": null,
+    "target_role": null,
+    "current_salary": null,
+    "job_hunting": false,
+    "skills": [],
+    "certifications": []
+  },
+  "immigration": {
+    "interested": false,
+    "target_country": null,
+    "education_level": null,
+    "work_experience_years": null,
+    "language_proficiency": null,
+    "crs_score": null
+  },
+  "finance": {
+    "annual_income": null,
+    "monthly_expenses": null,
+    "savings": null,
+    "investments": [],
+    "loans": [],
+    "credit_score": null
+  },
+  "health": {
+    "age_group": null,
+    "conditions": [],
+    "allergies": [],
+    "medications": [],
+    "insurance_type": null,
+    "insurance_provider": null
+  },
+  "preferences": {
+    "response_length": "medium",
+    "tone": "professional",
+    "include_data": true,
+    "notifications_enabled": false
+  },
+  "documents": [],
+  "conversations": [],
+  "commitments": [],
+  "action_tracker": [],
+  "goals": [],
+  "similar_users_count": 0,
+  "success_rate_for_situation": 0
+}
