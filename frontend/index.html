@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwarmBharat AI - Production Ready</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #090C14 0%, #121827 50%, #1A2233 100%);
+            color: #F9FAFB;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Login Screen Styles */
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .auth-left {
+            flex: 5;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-right {
+            flex: 6;
+            background: linear-gradient(135deg, #1A73E8 0%, #311B92 50%, #6200EA 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-right::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-30%, -70%) rotate(180deg); }
+        }
+
+        .auth-card {
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 18px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-logo {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #1565C0, #6200EA);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .auth-title h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F9FAFB;
+        }
+
+        .auth-title p {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 2px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 9px 10px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 10px;
+            color: #9CA3AF;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, #2563EB, #7C3AED);
+            color: white;
+            border-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #9CA3AF;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 12px;
+            color: #F9FAFB;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1A73E8;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1A73E8, #6200EA);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 8px;
+            margin: 1rem 0;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 10px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 10px;
+            color: #9CA3AF;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .social-btn:hover {
+            background: #2C374D;
+            color: #F9FAFB;
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            height: 100vh;
+            background: #090C14;
+        }
+
+        .app-sidebar {
+            width: 280px;
+            background: #121827;
+            border-right: 1px solid #2C374D;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .app-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background: #1A2233;
+            border-bottom: 1px solid #2C374D;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #090C14;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1A73E8, #6200EA);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #1A73E8, #6200EA);
+            border-color: transparent;
+        }
+
+        .input-container {
+            background: #1A2233;
+            border-top: 1px solid #2C374D;
+            padding: 1.5rem 2rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .file-upload-btn {
+            padding: 12px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 12px;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload-btn:hover {
+            background: #2C374D;
+            color: #F9FAFB;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #090C14;
+            border: 1px solid #2C374D;
+            border-radius: 12px;
+            color: #F9FAFB;
+            font-size: 14px;
+            resize: none;
+            min-height: 48px;
+            max-height: 120px;
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #1A73E8, #6200EA);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .domain-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .domain-chip {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #1A73E8, #6200EA);
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .domain-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            margin-left: 48px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #2C374D;
+            border-radius: 16px;
+            color: #9CA3AF;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: #2C374D;
+            color: #F9FAFB;
+            border-color: #1A73E8;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 12px;
+            color: #F9FAFB;
+            font-size: 14px;
+            margin-bottom: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1A73E8;
+        }
+
+        .example-prompts {
+            margin-top: 1rem;
+        }
+
+        .example-prompt {
+            padding: 8px 12px;
+            background: #1A2233;
+            border-left: 3px solid #1A73E8;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-prompt:hover {
+            background: #2C374D;
+            color: #F9FAFB;
+        }
+
+        .tagline {
+            font-size: 11px;
+            color: #6B7280;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: #1A73E8;
+        }
+
+        .file-info {
+            background: #1A2233;
+            border: 1px solid #2C374D;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 1rem;
+            font-size: 12px;
+            color: #9CA3AF;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="auth-container" id="authScreen">
+        <div class="auth-left">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                        </svg>
+                    </div>
+                    <div class="auth-title">
+                        <h2>SwarmBharat AI</h2>
+                        <p>Secure access portal</p>
+                    </div>
+                </div>
+
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                    <div class="auth-tab" onclick="switchAuthTab('signup')">Create Account</div>
+                </div>
+
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Login as</label>
+                        <select class="form-input" id="roleSelect">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="emailInput" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="passwordInput" placeholder="Enter your password">
+                    </div>
+
+                    <button class="btn-primary" onclick="login()">Login to dashboard</button>
+                </div>
+
+                <div id="signupForm" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-input" id="nameInput" placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="signupEmailInput" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="signupPasswordInput" placeholder="Create a password">
+                    </div>
+
+                    <button class="btn-primary" onclick="signup()">Create account</button>
+                </div>
+
+                <div class="social-login">
+                    <div class="social-btn" onclick="socialLogin('google')">🔗 Google</div>
+                    <div class="social-btn" onclick="socialLogin('apple')">🍎 Apple</div>
+                    <div class="social-btn" onclick="socialLogin('linkedin')">💼 LinkedIn</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-right">
+            <div style="text-align: center; z-index: 1; position: relative;">
+                <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem;">SwarmBharat AI</h1>
+                <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">Production-Ready Multi-Domain AI Assistant</p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 400px; margin: 0 auto;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                        <div style="font-weight: 600;">Career</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Jobs & Resume</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                        <div style="font-weight: 600;">Finance</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Investments</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌍</div>
+                        <div style="font-weight: 600;">Immigration</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Canada PR</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌾</div>
+                        <div style="font-weight: 600;">Farming</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Schemes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appScreen">
+        <div class="app-sidebar">
+            <div style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">SwarmBharat AI</h3>
+                <p style="font-size: 0.9rem; color: #6B7280;">For every Indian. Every situation. Every language.</p>
+            </div>
+
+            <input type="text" class="search-input" id="searchInput" placeholder="Ask me anything — job, money, visa, farm, legal, health..." onkeypress="handleSearchKeyPress(event)">
+            
+            <div class="example-prompts">
+                <div class="example-prompt" onclick="setExamplePrompt('How do I invest ₹50,000 safely with low risk?')">
+                    💰 How do I invest ₹50,000 safely with low risk?
+                </div>
+                <div class="example-prompt" onclick="setExamplePrompt('My landlord won\'t return deposit. What are my rights?')">
+                    ⚖️ My landlord won't return deposit. What are my rights?
+                </div>
+                <div class="example-prompt" onclick="setExamplePrompt('Which crop gives best return in Vidarbha this season?')">
+                    🌾 Which crop gives best return in Vidarbha this season?
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #2C374D;">
+                <button class="social-btn" style="text-align: left; width: 100%;" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="app-main">
+            <div class="app-header">
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">AI Assistant</h3>
+                    <p style="font-size: 0.9rem; color: #6B7280;">90%+ Success Rate • Real Indian Data</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span style="font-size: 0.9rem; color: #6B7280;" id="userInfo">User</span>
+                    <div class="message-avatar" id="userAvatar">U</div>
+                </div>
+            </div>
+
+            <div class="chat-container" id="chatContainer">
+                <div class="message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <strong>Namaste!</strong> I'm SwarmBharat — your personal AI for every life decision.<br><br>
+                        What do you need help with today? 👇
+                    </div>
+                </div>
+                
+                <div class="domain-chips" style="margin-left: 48px; margin-top: 20px;">
+                    <div class="domain-chip" onclick="quickDomain('career')">🎯 Career & Jobs</div>
+                    <div class="domain-chip" onclick="quickDomain('finance')">💰 Money & Investment</div>
+                    <div class="domain-chip" onclick="quickDomain('immigration')">🌍 Immigration & Visa</div>
+                    <div class="domain-chip" onclick="quickDomain('farming')">🌾 Farming & Land</div>
+                    <div class="domain-chip" onclick="quickDomain('health')">🏥 Health & Insurance</div>
+                    <div class="domain-chip" onclick="quickDomain('legal')">⚖️ Legal & Rights</div>
+                    <div class="domain-chip" onclick="quickDomain('business')">💼 Business & GST</div>
+                    <div class="domain-chip" onclick="quickDomain('education')">📚 Education & Loans</div>
+                    <div class="domain-chip" onclick="quickDomain('government')">🏛️ Government Schemes</div>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                🔄 Processing with real-time data and multi-agent analysis...
+            </div>
+
+            <div class="input-container">
+                <div class="file-info" id="fileInfo" style="display: none;"></div>
+                <div class="input-wrapper">
+                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
+                    <button class="file-upload-btn" onclick="document.getElementById('fileInput').click()">📁 Upload</button>
+                    <textarea class="message-input" id="messageInput" placeholder="Ask me anything about career, finance, immigration, farming..." onkeypress="handleKeyPress(event)"></textarea>
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api/v1/query';
+        let currentUser = null;
+        let uploadedFile = { name: null, base64Data: null };
+        let selectedDomain = 'all';
+        let conversationHistory = [];
+        let userProfile = {
+            name: '',
+            location: '',
+            domain: '',
+            occupation: '',
+            language: 'en'
+        };
+        
+        // Conversation memory functions
+        function addToHistory(role, content) {
+            conversationHistory.push({
+                role: role,
+                content: content,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Extract user profile after 2 messages
+            if (role === 'user' && conversationHistory.filter(m => m.role === 'user').length === 2) {
+                extractUserProfile(content);
+            }
+        }
+        
+        function extractUserProfile(message) {
+            // Simple extraction - in production use NLP
+            const lowerMsg = message.toLowerCase();
+            
+            // Location detection
+            const cities = ['hyderabad', 'bangalore', 'mumbai', 'delhi', 'chennai', 'pune', 'kolkata', 'nagpur', 'vidarbha'];
+            for (const city of cities) {
+                if (lowerMsg.includes(city)) {
+                    userProfile.location = city;
+                    break;
+                }
+            }
+            
+            // Occupation detection
+            if (lowerMsg.includes('farmer') || lowerMsg.includes('farming')) userProfile.occupation = 'farmer';
+            else if (lowerMsg.includes('student')) userProfile.occupation = 'student';
+            else if (lowerMsg.includes('business') || lowerMsg.includes('startup')) userProfile.occupation = 'entrepreneur';
+            else if (lowerMsg.includes('job') || lowerMsg.includes('work') || lowerMsg.includes('salary')) userProfile.occupation = 'salaried';
+            
+            // Language detection
+            if (/[ऀ-ॿ]/.test(message)) userProfile.language = 'hi';
+            else if (/[\u0C00-\u0C7F]/.test(message)) userProfile.language = 'te';
+            else if (/\b[a-z]+\s+[a-z]+\s+[a-z]+\b/i.test(message) && /[a-z]/i.test(message)) userProfile.language = 'hi-en';
+        }
+        
+        // Fixed markdown rendering function
+        function renderMarkdown(text) {
+            // Split into paragraphs first
+            const paragraphs = text.split('\n\n');
+            
+            return paragraphs.map(paragraph => {
+                let p = paragraph.trim();
+                
+                // Bold headers on their own lines
+                p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Italics
+                p = p.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Bullet points
+                p = p.replace(/•/g, '<br>•');
+                
+                // Numbered lists
+                p = p.replace(/\d+\.\s/g, '<br>$&');
+                
+                // Line breaks within paragraphs
+                p = p.replace(/\n/g, '<br>');
+                
+                return '<p>' + p + '</p>';
+            }).join('');
+        }
+        
+        // Action buttons based on domain
+        function getActionButtons(domain) {
+            const buttons = {
+                'career': ['📋 Write Cover Letter', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'finance': ['📊 Calculate Returns', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'immigration': ['🔍 Check Eligibility', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'farming': ['🌾 Find Schemes', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'health': ['🏥 Nearby Hospitals', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'legal': ['⚖️ Draft Notice', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'business': ['💼 GST Registration', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'education': ['📚 Find Scholarships', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'],
+                'government': ['🏛️ Check Eligibility', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate']
+            };
+            
+            return buttons[domain] || ['🔍 Go Deeper', '🇮🇳 Hindi', '🇮🇳 Telugu', '📄 PDF', '🔄 Regenerate'];
+        }
+
+        // Authentication functions
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function login() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const role = document.getElementById('roleSelect').value;
+            
+            if (!email || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Simulate login (in production, this would call backend)
+            currentUser = { name: email.split('@')[0], email, role };
+            showMainApp();
+        }
+
+        function signup() {
+            const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('signupEmailInput').value;
+            const password = document.getElementById('signupPasswordInput').value;
+            
+            if (!name || !email || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Simulate signup
+            currentUser = { name, email, role: 'user' };
+            showMainApp();
+        }
+
+        function socialLogin(provider) {
+            currentUser = { name: `${provider} User`, email: `user@${provider}.com`, role: 'user' };
+            showMainApp();
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'flex';
+            
+            // Update user info
+            document.getElementById('userInfo').textContent = currentUser.name;
+            document.getElementById('userAvatar').textContent = currentUser.name[0].toUpperCase();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appScreen').style.display = 'none';
+            
+            // Clear forms
+            document.getElementById('emailInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('nameInput').value = '';
+            document.getElementById('signupEmailInput').value = '';
+            document.getElementById('signupPasswordInput').value = '';
+        }
+
+        // Chat functions
+        function quickDomain(domain) {
+            const focusedQuestions = {
+                'career': "Are you looking for a new job, a salary raise, or career switch?",
+                'finance': "Are you saving, investing, or trying to reduce debt?",
+                'immigration': "Which country are you targeting, and what's your current visa status?",
+                'farming': "What crop and which state? I'll check current MSP and schemes for you.",
+                'health': "Is this for yourself or family? Are you looking for a policy or a claim?",
+                'legal': "Is this a personal, property, or workplace issue?",
+                'business': "Are you starting a new business, expanding, or need compliance help?",
+                'education': "Are you looking for admissions, scholarships, or career guidance?",
+                'government': "Are you a farmer, student, senior citizen, or business owner?"
+            };
+            
+            selectedDomain = domain;
+            document.getElementById('messageInput').value = focusedQuestions[domain];
+            // Auto-send the focused question
+            sendMessage();
+        }
+
+        function setExamplePrompt(prompt) {
+            document.getElementById('messageInput').value = prompt;
+            document.getElementById('messageInput').focus();
+        }
+
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                const query = document.getElementById('searchInput').value;
+                document.getElementById('messageInput').value = query;
+                sendMessage();
+                document.getElementById('searchInput').value = '';
+            }
+        }
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                uploadedFile = file;
+                const fileInfo = document.getElementById('fileInfo');
+                fileInfo.textContent = `📁 Uploaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                fileInfo.style.display = 'block';
+                
+                // Convert PDF to base64 for API and store it
+                const base64PDF = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+                
+                // Store base64 data for API call
+                uploadedFile.base64Data = base64PDF;
+                
+                // Add user message with file acknowledgment
+                addMessage(`📁 Uploaded file: ${file.name}`, 'user');
+                
+                // Auto-send message to read the PDF
+                document.getElementById('messageInput').value = "Please read the uploaded PDF and respond based on its actual content.";
+                sendMessage();
+            }
+        }
+
+        let messageId = 0;
+
+        function addMessage(text, sender, domain = '') {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.dataset.messageId = messageId++;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? currentUser.name[0].toUpperCase() : '🤖';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            
+            // Render markdown for bot messages
+            if (sender === 'bot') {
+                content.innerHTML = renderMarkdown(text);
+            } else {
+                content.textContent = text;
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            
+            // Add action buttons after bot messages
+            if (sender === 'bot') {
+                const actionButtons = document.createElement('div');
+                actionButtons.className = 'action-buttons';
+                
+                const buttons = getActionButtons(domain || selectedDomain);
+                buttons.forEach(buttonText => {
+                    const btn = document.createElement('button');
+                    btn.className = 'action-btn';
+                    btn.textContent = buttonText;
+                    btn.onclick = () => handleAction(buttonText);
+                    actionButtons.appendChild(btn);
+                });
+                
+                messageDiv.appendChild(actionButtons);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Add to conversation history (with deduplication)
+            const lastMessage = conversationHistory[conversationHistory.length - 1];
+            if (!lastMessage || lastMessage.content !== text || lastMessage.role !== sender) {
+                addToHistory(sender, text);
+            }
+        }
+        
+        function handleAction(action) {
+            if (action.includes('Hindi')) {
+                translateToHindi();
+            } else if (action.includes('Telugu')) {
+                translateToTelugu();
+            } else if (action.includes('PDF')) {
+                generatePDF();
+            } else if (action.includes('Regenerate')) {
+                regenerateLastResponse();
+            } else if (action.includes('Go Deeper')) {
+                // Get the last user message and ask for more details
+                const lastUserMessage = conversationHistory.filter(m => m.role === 'user').pop();
+                if (lastUserMessage) {
+                    document.getElementById('messageInput').value = `Tell me more about: ${lastUserMessage.content}`;
+                    sendMessage();
+                } else {
+                    document.getElementById('messageInput').value = 'Tell me more about your situation';
+                    sendMessage();
+                }
+            } else {
+                // Handle domain-specific actions
+                document.getElementById('messageInput').value = `Help me ${action.toLowerCase()}`;
+                sendMessage();
+            }
+        }
+
+        let isLoading = false;
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const query = input.value.trim();
+            
+            if (!query || isLoading) return;
+            
+            // Add user message to chat immediately
+            addMessage(query, 'user');
+            
+            // Clear input field
+            input.value = '';
+            
+            // Set loading state
+            isLoading = true;
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                // Build messages array with conversation history
+                let messages = [...conversationHistory];
+                
+                // Add current user message
+                let userMessage = { role: "user", content: query };
+                
+                // If we have a base64 PDF, add it as document
+                if (uploadedFile && query.includes("read the uploaded PDF")) {
+                    userMessage = { 
+                        role: "user", 
+                        content: [
+                            { type: "document", source: { type: "base64", media_type: "application/pdf", data: uploadedFile.base64Data } }, 
+                            { type: "text", text: query + "\n\nPlease read the uploaded PDF and respond based on its actual content." }
+                        ] 
+                    };
+                    messages.push(userMessage);
+                } else {
+                    messages.push({ role: "user", content: query });
+                }
+                
+                // EXACT SYSTEM PROMPT - REPLACED COMPLETELY
+                const systemPrompt = `---SYSTEM PROMPT START---
+You are SwarmBharat AI — a warm, smart, multilingual Indian life assistant. You help with ANY situation: career, money, farming, immigration, health, legal, business, education, government schemes, taxes, or personal decisions.
+
+CRITICAL RULES — follow these on EVERY single response without exception:
+
+RULE 1 — GREETINGS: If the user says hello, hi, namaste, hey, or any greeting:
+Reply with exactly 2 lines:
+Line 1: A warm greeting back (max 10 words)
+Line 2: "What would you like help with today?"
+That's it. Nothing else. No job data. No weather. No tools.
+
+RULE 2 — RESPONSE FORMAT for all non-greeting messages:
+Start with: one short empathetic sentence (max 12 words)
+Then write: "Final answer:" on its own line
+Then: maximum 3 sections, each with a bold header on its OWN LINE
+Each section: maximum 3 lines of content
+End with: one follow-up question OR one suggested next action
+
+RULE 3 — NEVER:
+- Run job search, weather, or any data tool unless user specifically asks
+- Respond with a wall of continuous text with bold words embedded mid-paragraph
+- Cut off mid-sentence — always complete your response fully
+- Say "I'd like to take a moment to understand" — be direct and immediate
+- Give generic advice without specific data — ALWAYS include at least one real Indian data point (₹ amount, scheme name, percentage, deadline) in every response
+
+RULE 4 — LANGUAGE:
+Detect user language in first message. Hindi → reply in Hindi. Telugu → reply in Telugu. Hinglish → reply in Hinglish. English → reply in English.
+
+RULE 5 — PROACTIVE SCHEMES:
+After message 2, if you know the user's situation, mention 1 government scheme they likely qualify for, even if they didn't ask.
+
+RULE 6 — NO INTERROGATION:
+NEVER ask more than ONE clarifying question per response. If you have enough context to attempt a helpful answer — DO IT. Make reasonable assumptions, state them briefly, then give the answer. Ask for correction after, not before.
+
+WHEN A DOCUMENT IS UPLOADED:
+You MUST: 1. Explicitly reference specific content from the document (name, skills, experience, companies, projects mentioned in it) 2. Never give generic advice — every suggestion must be based on what you actually read in the document 3. If you cannot read the document, say exactly: 'I wasn't able to read your file. Please paste the text here instead.' 4. Never pretend to read a document you haven't received 5. IMMEDIATELY analyze and give specific feedback: "Got your resume — reading it now..." Then in the SAME response give actual analysis based on what you read, not generic suggestions. 6. Always reference specific details: mention skills you saw, experience years, company names from the document.
+---SYSTEM PROMPT END---`;
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        user_id: currentUser.email,
+                        uploaded_documents: uploadedFile.name ? [uploadedFile.name] : [],
+                        domain: selectedDomain !== 'all' ? selectedDomain : null,
+                        system_prompt: systemPrompt,
+                        max_tokens: 2000, // Increased to prevent cutoff
+                        messages: messages,
+                        user_profile: userProfile,
+                        document: uploadedFile.base64Data ? {
+                            filename: uploadedFile.name,
+                            media_type: "application/pdf",
+                            data: uploadedFile.base64Data
+                        } : null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.response) {
+                    addMessage(data.response, 'bot', data.domain);
+                    
+                    // Check if we should suggest government schemes proactively
+                    if (conversationHistory.filter(m => m.role === 'user').length >= 2 && userProfile.occupation) {
+                        setTimeout(() => suggestGovernmentSchemes(), 1000);
+                    }
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                addMessage('❌ Error connecting to backend. Make sure the API server is running on localhost:8000', 'bot');
+                console.error('Error:', error);
+            } finally {
+                // Reset loading state
+                isLoading = false;
+            }
+        }
+        
+        function suggestGovernmentSchemes() {
+            const schemes = {
+                'farmer': 'Based on what you\'ve shared, here are benefits you likely qualify for but may not have claimed:\n\n• **PM-KISAN** - ₹6,000 per year direct income support\n• **Rythu Bandhu** - ₹5,000 per acre per season (Telangana only)\n• **PMFBY** - Crop insurance premium subsidy up to 85%\n\nWant me to help you apply for any of these?',
+                'student': 'Based on what you\'ve shared, here are benefits you likely qualify for but may not have claimed:\n\n• **NSP Scholarships** - Various merit and need-based scholarships\n• **Education Loan Subsidy** - Interest subsidy on education loans\n• **Skill India** - Free skill development courses with stipend\n\nWant me to check your eligibility for these schemes?',
+                'salaried': 'Based on what you\'ve shared, here are benefits you likely qualify for but may not have claimed:\n\n• **Section 80C** - Save up to ₹46,800 in taxes annually\n• **HRA Exemption** - Save on house rent allowance\n• **NPS** - Additional ₹50,000 deduction under 80CCD(1B)\n\nWant me to calculate your exact tax savings?',
+                'entrepreneur': 'Based on what you\'ve shared, here are benefits you likely qualify for but may not have claimed:\n\n• **Startup India Seed Fund** - Up to ₹5 crore funding\n• **MSME Loan** - Collateral-free loans up to ₹5 crore\n• **GST Composition** - Lower tax rates for small businesses\n\nWant me to help you with the application process?'
+            };
+            
+            if (schemes[userProfile.occupation]) {
+                addMessage(schemes[userProfile.occupation], 'bot', 'government');
+            }
+        }
+        
+        function translateToHindi() {
+            // Get the last AI response
+            const lastBotMessage = conversationHistory.filter(m => m.role === 'bot').pop();
+            if (lastBotMessage) {
+                addMessage('Translating to Hindi...', 'bot');
+                // Send translation request to backend
+                document.getElementById('messageInput').value = `Translate this to Hindi: "${lastBotMessage.content}"`;
+                sendMessage();
+            } else {
+                addMessage('No message to translate. Please send a message first.', 'bot');
+            }
+        }
+        
+        function translateToTelugu() {
+            // Get the last AI response
+            const lastBotMessage = conversationHistory.filter(m => m.role === 'bot').pop();
+            if (lastBotMessage) {
+                addMessage('Translating to Telugu...', 'bot');
+                // Send translation request to backend
+                document.getElementById('messageInput').value = `Translate this to Telugu: "${lastBotMessage.content}"`;
+                sendMessage();
+            } else {
+                addMessage('No message to translate. Please send a message first.', 'bot');
+            }
+        }
+        
+        function generatePDF() {
+            // Placeholder for PDF generation
+            addMessage('PDF generation feature coming soon! You\'ll be able to download our conversation.', 'bot');
+        }
+        
+        function regenerateLastResponse() {
+            const lastUserMessage = conversationHistory.filter(m => m.role === 'user').pop();
+            if (lastUserMessage) {
+                document.getElementById('messageInput').value = lastUserMessage.content;
+                sendMessage();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-focus email input
+            document.getElementById('emailInput').focus();
+        });
+    </script>
+</body>
+</html>

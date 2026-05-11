@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: swarmbharat-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: OPENWEATHERMAP_API_KEY
+        sync: false
