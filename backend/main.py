@@ -6,9 +6,10 @@ FastAPI application with real Indian data integration and multi-agent debate sys
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from fastapi_cache.decorator import cache
+# Cache disabled for deployment - can be added later
+# from fastapi_cache import FastAPICache
+# from fastapi_cache.backends.redis import RedisBackend
+# from fastapi_cache.decorator import cache
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Dict, Any
 import asyncio
