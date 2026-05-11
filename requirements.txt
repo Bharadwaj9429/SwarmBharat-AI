@@ -17,5 +17,3 @@ redis==5.0.0
 python-jose==3.3.0
 passlib==1.7.4
 bcrypt==4.1.0
-starlette==0.41.0
-anyio==4.6.0
